@@ -54,12 +54,12 @@
 
     function getResizeFactor(img) {
         const MAX_WIDTH = +document.getElementById("max-width").value || INSTA_CHARS_PER_LINE;
-        document.documentElement.style.setProperty("--pixel-font-size", 1000 / MAX_WIDTH + "px")
-        document.documentElement.style.setProperty("--pixel-size", 600 / MAX_WIDTH + "px")
+        document.documentElement.style.setProperty("--pixel-font-size", 800 / MAX_WIDTH + "px");
+        document.documentElement.style.setProperty("--pixel-size", 800 / MAX_WIDTH + "px");
         const WIDTH = img.naturalWidth;
         return (WIDTH > MAX_WIDTH) 
             ? MAX_WIDTH / WIDTH
-            : 1
+            : 1;
     }
 
     function arrayToMatrix(arr, size) {
@@ -96,7 +96,21 @@
                     "+",
                     ",",
                     ".",
-                    " "
+                    "⠀"
+                ];
+                parentNode.innerHTML = renderBW(values, cell);
+                break;
+            }
+            case "bw-text-insta": {
+                const values = [
+                    "$",
+                    "8",
+                    "£",
+                    "?",
+                    "o",
+                    "7",
+                    "L",
+                    "_",
                 ];
                 parentNode.innerHTML = renderBW(values, cell);
                 break;
@@ -126,19 +140,19 @@
                 parentNode.innerHTML = renderBW(values, cell);
                 break;
             }
-            case "rgb-emoji": {
-                parentNode.innerHTML = renderRGBEmoji(cell);
-                break;
-            }
             case "brown-skinTones": {
                 const values = [
-                    "&#127999;",
-                    "&#127998;",
-                    "&#127997;",
-                    "&#127996;",
-                    "&#127995;"
+                "&#127999;",
+                "&#127998;",
+                "&#127997;",
+                "&#127996;",
+                "&#127995;"
                 ];
                 parentNode.innerHTML = renderBW(values, cell);
+                break;
+            }
+            case "rgb-emoji": {
+                parentNode.innerHTML = renderRGBEmoji(cell);
                 break;
             }
             default:
@@ -199,43 +213,6 @@
         }
     }
 
-    function renderBWDices(value) {
-        const values = [
-            "&#9861;",   
-            "&#9860;",
-            "&#9859;",
-            "&#9858;",
-            "&#9857;",
-            "&#9856;"
-        ];
-        return values[grayscaleToRange(value, values.length)];
-        // switch(true) {    
-        //     case (value < 43):
-        //         return "&#9861;";        
-        //     case (value < 85):
-        //         return "&#9860;";
-        //     case (value < 128):
-        //         return "&#9859;";
-        //     case (value < 170):
-        //         return "&#9858;";
-        //     case (value < 213):
-        //         return "&#9857;";
-        //     default:
-        //         return "&#9856;";
-        // }
-    }
-
-    function renderBrownSkinTones(value) {
-        const values = [
-            "&#127999;",
-            "&#127998;",
-            "&#127997;",
-            "&#127996;",
-            "&#127995;"
-        ];
-        return values[grayscaleToRange(value, values.length)];
-    }
-
     function grayscaleToRange(value, fractions=3) {
         const SPAN = 255 / fractions;
         let fractionSpan = 0;
@@ -288,7 +265,8 @@
             <option value="bw-emoji">bw-emoji</option>
             <option value="rgb-emoji">rgb-emoji</option>
             <option value="bw-dices">bw-dices</option>
-            <option value="brown-skinTones" selected>brown-skinTones</option>
+            <option value="brown-skinTones">brown-skinTones</option>
+            <option value="bw-text-insta" selected>bw-text-insta</option>
         </select>
     </div>
     <hr>
