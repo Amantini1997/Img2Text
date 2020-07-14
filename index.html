@@ -89,27 +89,56 @@
     function renderCell(parentNode, cell, mode) {
         switch (mode) {
             case "bw-text": {
-                let avgValue = (cell[0] + cell[1] + cell[2]) / 3;
-                parentNode.innerHTML = renderBWText(avgValue);
+                const values = [
+                    "@",   
+                    "#",
+                    "X",
+                    "+",
+                    ",",
+                    ".",
+                    " "
+                ];
+                parentNode.innerHTML = renderBW(values, cell);
                 break;
             }
             case "bw-emoji": {
-                let avgValue = (cell[0] + cell[1] + cell[2]) / 3;
-                parentNode.innerHTML = renderBWEmoji(avgValue);
+                const values = [
+                    "&#9673;",  
+                    "&#127770;",    
+                    "&#127761;",
+                    "&#127921;",
+                    "&#9677;",
+                    "&#127952;",
+                    "&#9898;"
+                ];
+                parentNode.innerHTML = renderBW(values, cell);
+                break;
+            }
+            case "bw-dices": {
+                const values = [
+                    "&#9861;",   
+                    "&#9860;",
+                    "&#9859;",
+                    "&#9858;",
+                    "&#9857;",
+                    "&#9856;"
+                ];
+                parentNode.innerHTML = renderBW(values, cell);
                 break;
             }
             case "rgb-emoji": {
                 parentNode.innerHTML = renderRGBEmoji(cell);
                 break;
             }
-            case "bw-dices": {
-                let avgValue = (cell[0] + cell[1] + cell[2]) / 3;
-                parentNode.innerHTML = renderBWDices(avgValue);
-                break;
-            }
             case "brown-skinTones": {
-                let avgValue = (cell[0] + cell[1] + cell[2]) / 3;
-                parentNode.innerHTML = renderBrownSkinTones(avgValue);
+                const values = [
+                    "&#127999;",
+                    "&#127998;",
+                    "&#127997;",
+                    "&#127996;",
+                    "&#127995;"
+                ];
+                parentNode.innerHTML = renderBW(values, cell);
                 break;
             }
             default:
@@ -119,48 +148,15 @@
         }
     }
 
-    function renderBWText(value) {
-        switch(true) {
-            case (value < 32):
-                return "@";        
-            case (value < 65):
-                return "#";        
-            case (value < 98):
-                return "X";
-            case (value < 130):
-                return "+";
-            case (value < 195):
-                return ",";
-            case (value < 220):
-                return ".";
-            default:
-                return " ";
-        }
-    }
-
-    function renderBWEmoji(value) {
-        switch(true) {
-            case (value < 32):
-                return "&#9673;";        
-            case (value < 65):
-                return "&#127770;";        
-            case (value < 98):
-                return "&#127761;";
-            case (value < 130):
-                return "&#127921;";
-            case (value < 195):
-                return "&#9677;";
-            case (value < 220):
-                return "&#127952;";
-            default:
-                return "&#9898;";
-        }
+    function renderBW(values, cell) {
+        let grayScaleValue = (cell[0] + cell[1] + cell[2]) / 3;
+        return values[grayscaleToRange(grayScaleValue, values.length)];
     }
 
     function renderRGBEmoji(cell) {
-        const R = RGBToRange(cell[0], 3);
-        const G = RGBToRange(cell[1], 3);
-        const B = RGBToRange(cell[2], 3);
+        const R = grayscaleToRange(cell[0], 3);
+        const G = grayscaleToRange(cell[1], 3);
+        const B = grayscaleToRange(cell[2], 3);
         const SUM = R + G + B;
         const RGB = +("" + R + G + B);
         switch(true) {
@@ -204,20 +200,29 @@
     }
 
     function renderBWDices(value) {
-        switch(true) {    
-            case (value < 43):
-                return "&#9861;";        
-            case (value < 85):
-                return "&#9860;";
-            case (value < 128):
-                return "&#9859;";
-            case (value < 170):
-                return "&#9858;";
-            case (value < 213):
-                return "&#9857;";
-            default:
-                return "&#9856`;";
-        }
+        const values = [
+            "&#9861;",   
+            "&#9860;",
+            "&#9859;",
+            "&#9858;",
+            "&#9857;",
+            "&#9856;"
+        ];
+        return values[grayscaleToRange(value, values.length)];
+        // switch(true) {    
+        //     case (value < 43):
+        //         return "&#9861;";        
+        //     case (value < 85):
+        //         return "&#9860;";
+        //     case (value < 128):
+        //         return "&#9859;";
+        //     case (value < 170):
+        //         return "&#9858;";
+        //     case (value < 213):
+        //         return "&#9857;";
+        //     default:
+        //         return "&#9856;";
+        // }
     }
 
     function renderBrownSkinTones(value) {
@@ -228,10 +233,10 @@
             "&#127996;",
             "&#127995;"
         ];
-        return values[RGBToRange(value, values.length)];
+        return values[grayscaleToRange(value, values.length)];
     }
 
-    function RGBToRange(value, fractions=3) {
+    function grayscaleToRange(value, fractions=3) {
         const SPAN = 255 / fractions;
         let fractionSpan = 0;
         while( value > SPAN) {
