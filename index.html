@@ -271,18 +271,27 @@
 </head>
 <body>
   <div id="container">
-    <label for="input">Image:</label>
-    <input id="input" type="file" name="text" value="">
-    <label for="max-width">Pixel width:</label>
-    <input id="max-width" type="number" value="55">
-    <label>Texture:</label>
-    <select id="texture">
-      <option value="bw-text">bw-text</option>
-      <option value="bw-emoji">bw-emoji</option>
-      <option value="rgb-emoji">rgb-emoji</option>
-      <option value="bw-dices">bw-dices</option>
-      <option value="brown-skinTones" selected>brown-skinTones</option>
-    </select>
+    <div>    
+        <label for="input">Image:</label>
+        <input id="input" type="file" name="text" value="">
+    </div>
+    <hr>
+    <div>
+        <label for="max-width">Pixel width:</label>
+        <input id="max-width" type="number" value="55">
+    </div>
+    <hr>
+    <div>
+        <label for="texture">Texture:</label>
+        <select id="texture">
+            <option value="bw-text">bw-text</option>
+            <option value="bw-emoji">bw-emoji</option>
+            <option value="rgb-emoji">rgb-emoji</option>
+            <option value="bw-dices">bw-dices</option>
+            <option value="brown-skinTones" selected>brown-skinTones</option>
+        </select>
+    </div>
+    <hr>
     <button onclick="copyText()">
         <i class="fa fas fa-copy"></i>
          COPY

@@ -4,19 +4,19 @@
 }
 
 body {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 img {
-  width: 80vw;
-  height: auto;
+    width: 80vw;
+    height: auto;
 }
 
 img[src="hideme"] {
-  display: none;
+    display: none;
 }
 
 #txt-output {
@@ -34,4 +34,48 @@ img[src="hideme"] {
     font-size: var(--pixel-font-size);
     width: var(--pixel-size);
     height: var(--pixel-size);
+}
+
+#container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#container > div {
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+}
+
+#container > button {
+    width: 80px;
+    border-radius: 20px;
+    border: none;
+    font-weight: bold;
+    height: 30px;
+    border: solid 1px black;
+    outline: none;
+    background-color: rgb(228, 228, 228);
+    transition: all .3s;
+}
+
+#container > button:active {
+    background-color: rgb(155, 155, 155);
+}
+
+@media only screen and (max-width: 700px) {
+    #container > div {
+        flex-direction: column;
+    }
+
+    hr {
+        border: none;
+    }
+}
+
+hr {
+    width: 100%;
+    border: solid 2px blackl
 }
