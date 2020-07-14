@@ -3,45 +3,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Img2Text</title>
-  <style>
-    :root {     
-        --pixel-size: 5px;
-        --pixel-font-size: 1rem;
-    }
-
-    body {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-
-    img {
-      width: 80vw;
-      height: auto;
-    }
-
-    img[src="hideme"] {
-      display: none;
-    }
-
-    #txt-output {
-        display: flex;
-        flex-direction: column;
-        max-width: 100vw;
-    }
-
-    #txt-output > div {
-        display: flex;
-        flex-direction: row;
-    }
-
-    #txt-output > div > * {
-        font-size: var(--pixel-font-size);
-        width: var(--pixel-size);
-        height: var(--pixel-size);
-    }
-  </style>
+  <link rel="stylesheet" href="index.css">
   <script>
     const INSTA_CHARS_PER_LINE = 55;
 
@@ -303,7 +265,7 @@
   </script>
 </head>
 <body>
-  <div>
+  <div id="container">
     <label for="input">Image:</label>
     <input id="input" type="file" name="text" value="">
     <label for="max-width">Pixel width:</label>
@@ -316,15 +278,15 @@
       <option value="bw-dices">bw-dices</option>
       <option value="brown-skinTones" selected>brown-skinTones</option>
     </select>
+    <button onclick="copyText()">
+        <i class="fa fas fa-copy"></i>
+         COPY
+    </button>
   </div>
   <canvas id="canvas-output"></canvas>
   <div id="txt-output"> 
       Your image as a text will be displayed here
   </div>
-  <button onclick="copyText()">
-      <i class="fa fas fa-copy"></i>
-       COPY
-  </button>
 </body>
 </html>
 
