@@ -1,0 +1,316 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Bootstrap</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  <style>
+    :root {     
+        --pixel-size: 5px;
+        --pixel-font-size: 1rem;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    img {
+      width: 80vw;
+      height: auto;
+    }
+
+    img[src="hideme"] {
+      display: none;
+    }
+
+    #txt-output {
+        display: flex;
+        flex-direction: column;
+        max-width: 100vw;
+    }
+
+    #txt-output > div {
+        display: flex;
+        flex-direction: row;
+    }
+
+    #txt-output > div > * {
+        font-size: var(--pixel-font-size);
+        width: var(--pixel-size);
+        height: var(--pixel-size);
+    }
+  </style>
+  <script>
+    const INSTA_CHARS_PER_LINE = 55;
+
+    window.onload = () => {
+        document.getElementById("input").onchange = async e => img2Text(e);
+    }
+
+    function img2Text(e) {
+            // GET the image
+            const input = (e.target || window.event.srcElement);
+            const imgSrc = window.URL.createObjectURL(input.files[0]);
+            const img = new Image();
+            img.onload = () => {
+                const [imgTypedArr, resizedWidth] = imgToMatrix(img);
+                const imgArr = Array.from(imgTypedArr);
+                const imgPixelArray = arrayToMatrix(imgArr, 4);
+                const imgPixelMatrix = arrayToMatrix(imgPixelArray, resizedWidth);
+                renderDivImage(imgPixelMatrix);
+            }
+            img.src = imgSrc;
+    }
+
+    /**
+     * return the Array of pixels and the number or columns
+     */
+    function imgToMatrix(img, x = 0, y = 0) {
+        var canvas = document.getElementById('canvas-output');
+        var context = canvas.getContext('2d');
+        const RESIZE_FACTOR = getResizeFactor(img);
+        const RESIZED_WIDTH = Math.floor(img.naturalWidth * RESIZE_FACTOR);
+        const RESIZED_HEIGHT = Math.floor(img.naturalHeight * RESIZE_FACTOR);
+        context.canvas.width  = RESIZED_WIDTH;
+        context.canvas.height = RESIZED_HEIGHT;
+        context.drawImage(img, 0, 0, RESIZED_WIDTH, RESIZED_HEIGHT);
+        // console.log(context.getImageData(x, y, RESIZED_WIDTH, RESIZED_HEIGHT).data)
+        return [context.getImageData(x, y, RESIZED_WIDTH, RESIZED_HEIGHT).data, RESIZED_WIDTH];
+
+    }
+
+    function getResizeFactor(img) {
+        const MAX_WIDTH = +document.getElementById("max-width").value || INSTA_CHARS_PER_LINE;
+        document.documentElement.style.setProperty("--pixel-font-size", 1000 / MAX_WIDTH + "px")
+        document.documentElement.style.setProperty("--pixel-size", 600 / MAX_WIDTH + "px")
+        const WIDTH = img.naturalWidth;
+        return (WIDTH > MAX_WIDTH) 
+            ? MAX_WIDTH / WIDTH
+            : 1
+    }
+
+    function arrayToMatrix(arr, size) {
+        let matrix = [];
+        while (arr.length > 0)
+            matrix.push(arr.splice(0, size));
+        return matrix;
+    }
+
+    function renderDivImage(imgMatrix) {
+        const textureInput = document.getElementById("texture");
+        const textureMode = textureInput.options[textureInput.selectedIndex].value;
+        const container = document.getElementById("txt-output");
+        container.innerHTML = "<br>";
+        console.debug(textureMode);
+        imgMatrix.forEach(async row => {
+            const rowDiv = document.createElement("div");
+            container.appendChild(rowDiv);
+            row.forEach(async cell => {
+                const cellDiv = document.createElement("span");
+                rowDiv.appendChild(cellDiv);
+                renderCell(cellDiv, cell, textureMode);
+            });
+        });
+    }
+
+    function renderCell(parentNode, cell, mode) {
+        switch (mode) {
+            case "bw-text": {
+                let avgValue = (cell[0] + cell[1] + cell[2]) / 3;
+                parentNode.innerHTML = renderBWText(avgValue);
+                break;
+            }
+            case "bw-emoji": {
+                let avgValue = (cell[0] + cell[1] + cell[2]) / 3;
+                parentNode.innerHTML = renderBWEmoji(avgValue);
+                break;
+            }
+            case "rgb-emoji": {
+                parentNode.innerHTML = renderRGBEmoji(cell);
+                break;
+            }
+            case "bw-dices": {
+                let avgValue = (cell[0] + cell[1] + cell[2]) / 3;
+                parentNode.innerHTML = renderBWDices(avgValue);
+                break;
+            }
+            case "brown-skinTones": {
+                let avgValue = (cell[0] + cell[1] + cell[2]) / 3;
+                parentNode.innerHTML = renderBrownSkinTones(avgValue);
+                break;
+            }
+            default:
+                let rgbBg = [cell[0], cell[1], cell[2]].join(",");
+                parentNode.style.backgroundColor = "rgb(" + rgbBg + ")";
+                break;
+        }
+    }
+
+    function renderBWText(value) {
+        switch(true) {
+            case (value < 32):
+                return "@";        
+            case (value < 65):
+                return "#";        
+            case (value < 98):
+                return "X";
+            case (value < 130):
+                return "+";
+            case (value < 195):
+                return ",";
+            case (value < 220):
+                return ".";
+            default:
+                return " ";
+        }
+    }
+
+    function renderBWEmoji(value) {
+        switch(true) {
+            case (value < 32):
+                return "&#9673;";        
+            case (value < 65):
+                return "&#127770;";        
+            case (value < 98):
+                return "&#127761;";
+            case (value < 130):
+                return "&#127921;";
+            case (value < 195):
+                return "&#9677;";
+            case (value < 220):
+                return "&#127952;";
+            default:
+                return "&#9898;";
+        }
+    }
+
+    function renderRGBEmoji(cell) {
+        const R = RGBToRange(cell[0], 3);
+        const G = RGBToRange(cell[1], 3);
+        const B = RGBToRange(cell[2], 3);
+        const SUM = R + G + B;
+        const RGB = +("" + R + G + B);
+        switch(true) {
+            //BLACK
+            case (SUM == 0):
+                return "&#9899;";   
+            //WHITE
+            case (SUM == 6):
+                return "&#9898;";  
+            //GREY
+            case (RGB === 111):
+                return "&#9917;";  
+            //RED & BROWN
+            case ([100, 200].includes(RGB)):
+                return "&#9800;";
+            case ([].includes(RGB)):
+                return "&#9801;";
+            case ([210].includes(RGB)):
+                return "&#9802;";
+            case ([220].includes(RGB)):
+                return "&#9803;";
+            case ([221].includes(RGB)):
+                return "&#9804;";  
+            case ([020, 120, 121].includes(RGB)):
+                return "&#9805;";
+            case ([010, 110].includes(RGB)):
+                return "&#9806;";
+            case ([011, 021].includes(RGB)):
+                return "&#9807;";
+            case ([001, 002, 012, 022, 122].includes(RGB)):
+                return "&#9808;";
+            case ([102, 112].includes(RGB)):
+                return "&#9809;";
+            case ([101, 202].includes(RGB)):
+                return "&#9810;";
+            case ([201, 211, 212].includes(RGB)):
+                return "&#9811;"; 
+            default:
+                return "&#9898;";
+        }
+    }
+
+    function renderBWDices(value) {
+        switch(true) {    
+            case (value < 43):
+                return "&#9861;";        
+            case (value < 85):
+                return "&#9860;";
+            case (value < 128):
+                return "&#9859;";
+            case (value < 170):
+                return "&#9858;";
+            case (value < 213):
+                return "&#9857;";
+            default:
+                return "&#9856`;";
+        }
+    }
+
+    function renderBrownSkinTones(value) {
+        const values = [
+            "&#127999;",
+            "&#127998;",
+            "&#127997;",
+            "&#127996;",
+            "&#127995;"
+        ];
+        return values[RGBToRange(value, values.length)];
+    }
+
+    function RGBToRange(value, fractions=3) {
+        const SPAN = 255 / fractions;
+        let fractionSpan = 0;
+        while( value > SPAN) {
+            fractionSpan++;
+            value -= SPAN;
+        }
+        return fractionSpan;
+    }
+
+    function copyText() {
+        const container = document.getElementById("txt-output");
+        let children = [...container.children];
+        children.shift();
+        const text = children.map(div => [...div.children].map(span => span.innerHTML).join("")).join("\n");
+        console.log(text)
+    }
+
+  </script>
+</head>
+<body>
+  <div>
+    <label for="input">Image:</label>
+    <input id="input" type="file" name="text" value="">
+    <label for="max-width">Pixel width:</label>
+    <input id="max-width" type="number" value="55">
+    <label>Texture:</label>
+    <select id="texture">
+      <option value="bw-text">bw-text</option>
+      <option value="bw-emoji">bw-emoji</option>
+      <option value="rgb-emoji">rgb-emoji</option>
+      <option value="bw-dices">bw-dices</option>
+      <option value="brown-skinTones" selected>brown-skinTones</option>
+    </select>
+  </div>
+  <canvas id="canvas-output"></canvas>
+  <div id="txt-output"> 
+      Your image as a text will be displayed here
+  </div>
+  <button class="fa fas fa-copy" onclick="copyText()">
+    COPY
+  </button>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+</body>
+</html>
+
+
+
+
+
