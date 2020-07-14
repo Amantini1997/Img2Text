@@ -47,19 +47,25 @@
 
     window.onload = () => {
         document.getElementById("input").onchange = async e => img2Text(e);
-        document.getElementById("texture").onchange = async e => img2Text(e);
+        document.getElementById("texture").onchange = rerender;
+        document.getElementById("max-width").onchange = rerender;
     }
 
     function img2Text(e) {
             // GET the image
             const input = (e.target || window.event.srcElement);
-            const imgSrc = window.URL.createObjectURL(input.files[0]);
-            const img = new Image();
-            img.onload = () => mainRender(img);
-            img.src = imgSrc;
+            window.imgSrc = window.URL.createObjectURL(input.files[0]);
+            rerender();
     }
 
-    function mainRender(img) {
+    function rerender() {
+        if (!window.imgSrc) return;
+        const img = new Image();
+        img.onload = () => elaborateImage(img);
+        img.src = window.imgSrc;
+    }
+
+    function elaborateImage(img) {
         const [imgTypedArr, resizedWidth] = imgToMatrix(img);
         const imgArr = Array.from(imgTypedArr);
         const imgPixelArray = arrayToMatrix(imgArr, 4);
@@ -282,9 +288,6 @@
         console.log(text);
     }
 
-    function HTMLToText() {
-    }
-
     function copyStringToClipboard (str) {
         var el = document.createElement('textarea');
         el.value = str;
@@ -318,8 +321,9 @@
   <div id="txt-output"> 
       Your image as a text will be displayed here
   </div>
-  <button class="fa fas fa-copy" onclick="copyText()">
-    COPY
+  <button onclick="copyText()">
+      <i class="fa fas fa-copy"></i>
+       COPY
   </button>
 </body>
 </html>
