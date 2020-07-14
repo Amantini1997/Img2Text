@@ -1,0 +1,42 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #output {
+            width: 100px;
+            height: 100px;
+            background-color: #888;
+            border: solid 1px black;
+        }
+    </style>
+</head>
+<body>
+    <label for="r">R</label>
+    <input id="r" type="range" min="0" max="2">
+    <label for="g">G</label>
+    <input id="g" type="range" min="0" max="2">
+    <label for="b">B</label>
+    <input id="b" type="range" min="0" max="2">
+    <div id="output"></div>
+    <script>
+        const PALETTE = ["3", "8", "D"];
+        window.RGB = {
+            r: "8",
+            g: "8",
+            b: "8"
+        }
+        window.output = document.getElementById("output");
+        window.onload = (_ => {
+            document.querySelectorAll("input").forEach(i => {
+                i.onchange = (e => {
+                    let rgb = e.target;
+                    window.RGB[rgb.id] = PALETTE[rgb.value];
+                    window.output.style.backgroundColor =  window.RGB.r + window.RGB.g + window.RGB.b;
+                })
+            })
+        })
+    </script>
+</body>
+</html>

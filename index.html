@@ -276,8 +276,21 @@
         let children = [...container.children];
         children.shift();
         const text = children.map(div => [...div.children].map(span => span.innerHTML).join("")).join("\n");
-        console.log(text)
+        copyStringToClipboard(text);
+        console.log(text);
     }
+
+    function copyStringToClipboard (str) {
+        var el = document.createElement('textarea');
+        el.value = str;
+        el.setAttribute('readonly', '');
+        el.style = {position: 'absolute', left: '-9999px'};
+        document.body.appendChild(el);
+        el.select();
+        el.setSelectionRange(0, 99999); /*For mobile devices*/
+        document.execCommand('copy');
+        document.body.removeChild(el);
+     }
 
   </script>
 </head>
