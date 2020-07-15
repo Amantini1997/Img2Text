@@ -55,7 +55,7 @@
     function getResizeFactor(img) {
         const MAX_WIDTH = +document.getElementById("max-width").value || INSTA_CHARS_PER_LINE;
         document.documentElement.style.setProperty("--pixel-font-size", 800 / MAX_WIDTH + "px");
-        document.documentElement.style.setProperty("--pixel-size", 800 / MAX_WIDTH + "px");
+        document.documentElement.style.setProperty("--pixel-size", 600 / MAX_WIDTH + "px");
         const WIDTH = img.naturalWidth;
         return (WIDTH > MAX_WIDTH) 
             ? MAX_WIDTH / WIDTH
@@ -78,15 +78,15 @@
         imgMatrix.forEach(async row => {
             const rowDiv = document.createElement("div");
             container.appendChild(rowDiv);
-            row.forEach(async cell => {
+            row.forEach(cell => {
                 const cellDiv = document.createElement("span");
                 rowDiv.appendChild(cellDiv);
-                renderCell(cellDiv, cell, textureMode);
-            });
+                renderCell(cell, textureMode, cellDiv);
+            });   
         });
     }
 
-    function renderCell(parentNode, cell, mode) {
+    function renderCell(cell, mode, parentNode=null) {
         switch (mode) {
             case "bw-text": {
                 const values = [
@@ -99,7 +99,7 @@
                     "⠀"
                 ];
                 parentNode.innerHTML = renderBW(values, cell);
-                break;
+                return;
             }
             case "bw-text-insta": {
                 const values = [
@@ -113,20 +113,20 @@
                     "_",
                 ];
                 parentNode.innerHTML = renderBW(values, cell);
-                break;
+                return;
             }
             case "bw-emoji": {
                 const values = [
-                    "&#9673;",  
+                    //"&#9673;",  
                     "&#127770;",    
                     "&#127761;",
-                    "&#127921;",
-                    "&#9677;",
+                    //"&#127921;",
+                    "&#9917;",
                     "&#127952;",
                     "&#9898;"
                 ];
                 parentNode.innerHTML = renderBW(values, cell);
-                break;
+                return;
             }
             case "bw-dices": {
                 const values = [
@@ -138,7 +138,7 @@
                     "&#9856;"
                 ];
                 parentNode.innerHTML = renderBW(values, cell);
-                break;
+                return;            
             }
             case "brown-skinTones": {
                 const values = [
@@ -149,16 +149,16 @@
                 "&#127995;"
                 ];
                 parentNode.innerHTML = renderBW(values, cell);
-                break;
+                return;
             }
             case "rgb-emoji": {
                 parentNode.innerHTML = renderRGBEmoji(cell);
-                break;
+                return;
             }
             default:
                 let rgbBg = [cell[0], cell[1], cell[2]].join(",");
                 parentNode.style.backgroundColor = "rgb(" + rgbBg + ")";
-                break;
+                return;
         }
     }
 
