@@ -79,7 +79,7 @@
             const rowDiv = document.createElement("div");
             container.appendChild(rowDiv);
             row.forEach(cell => {
-                const cellDiv = document.createElement("span");
+                const cellDiv = document.createElement("div");
                 rowDiv.appendChild(cellDiv);
                 renderCell(cell, textureMode, cellDiv);
             });   
@@ -117,13 +117,14 @@
             }
             case "bw-emoji": {
                 const values = [
-                    //"&#9673;",  
-                    "&#127770;",    
-                    "&#127761;",
-                    //"&#127921;",
-                    "&#9917;",
-                    "&#127952;",
-                    "&#9898;"
+                    "&#9899;",      // dark
+                    //"&#127770;",  // dark moon  
+                    "&#127921;",    // pool
+                    //"&#127761;",  // grey
+                    "&#9201;",      // timer
+                    "&#9917;",      // soccer ball
+                    "&#127952;",    // volley ball
+                    "&#9898;"       // white
                 ];
                 parentNode.innerHTML = renderBW(values, cell);
                 return;
@@ -142,11 +143,11 @@
             }
             case "brown-skinTones": {
                 const values = [
-                "&#127999;",
-                "&#127998;",
-                "&#127997;",
-                "&#127996;",
-                "&#127995;"
+                    "&#127999;",
+                    "&#127998;",
+                    "&#127997;",
+                    "&#127996;",
+                    "&#127995;"
                 ];
                 parentNode.innerHTML = renderBW(values, cell);
                 return;
@@ -262,11 +263,11 @@
         <label for="texture">Texture:</label>
         <select id="texture">
             <option value="bw-text">bw-text</option>
-            <option value="bw-emoji">bw-emoji</option>
+            <option value="bw-emoji" selected>bw-emoji</option>
             <option value="rgb-emoji">rgb-emoji</option>
             <option value="bw-dices">bw-dices</option>
             <option value="brown-skinTones">brown-skinTones</option>
-            <option value="bw-text-insta" selected>bw-text-insta</option>
+            <option value="bw-text-insta">bw-text-insta</option>
         </select>
     </div>
     <hr>
