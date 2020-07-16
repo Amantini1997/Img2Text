@@ -1,10 +1,22 @@
 :root {     
     --pixel-size: 5px;
-    --pixel-font-size: 1rem;
+    --cell-font-size: 1rem;
+    --line-height: 1em;
+}
+
+* {
+    box-sizing: border-box;
+    max-width: 100vw;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 body {
+    margin: auto;
+}
+
+#jumbo-ctn {
+    /* padding: 10px; */
+    width: 100vw;
     display: flex;
     flex-direction: column;
     /* justify-content: center; */
@@ -14,20 +26,20 @@ body {
 
 /*========PANEL========*/
 
-#container {
+#panel {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-#container > div {
+#panel > div {
     flex-direction: row;
     justify-content: center;
     width: 100%;
 }
 
-#container > button {
+#panel > button {
     width: 80px;
     border-radius: 20px;
     border: none;
@@ -39,12 +51,12 @@ body {
     transition: all .3s;
 }
 
-#container > button:active {
+#panel > button:active {
     background-color: rgb(155, 155, 155);
 }
 
 @media only screen and (max-width: 700px) {
-    #container > div {
+    #panel > div {
         flex-direction: column;
     }
 
@@ -74,14 +86,12 @@ img[src="hideme"] {
 }
 
 #txt-output > div {
-    width: 100%;
-    display: table-row;
+    display: flex;
+    line-height: var(--line-height);
 }
 
-
 #txt-output > div > div {
-    display: table-cell;
-    /* font-size: var(--pixel-font-size);
-    width: var(--pixel-size);
+    font-size: var(--cell-font-size);
+    /* width: var(--pixel-size);
     height: var(--pixel-size); */
 }

@@ -5,7 +5,7 @@
   <title>Img2Text</title>
   <link rel="stylesheet" href="index.css">
   <script>
-    const INSTA_CHARS_PER_LINE = 55;
+    const DEFAULT_CHARS_PER_LINE = 55;
 
     window.onload = () => {
         document.getElementById("input").onchange = async e => img2Text(e);
@@ -41,25 +41,32 @@
     function imgToMatrix(img, x = 0, y = 0) {
         var canvas = document.getElementById('canvas-output');
         var context = canvas.getContext('2d');
-        const RESIZE_FACTOR = getResizeFactor(img);
+        const RESIZE_FACTOR = getResizedFactor(img);
         const RESIZED_WIDTH = Math.floor(img.naturalWidth * RESIZE_FACTOR);
         const RESIZED_HEIGHT = Math.floor(img.naturalHeight * RESIZE_FACTOR);
         context.canvas.width  = RESIZED_WIDTH;
         context.canvas.height = RESIZED_HEIGHT;
         context.drawImage(img, 0, 0, RESIZED_WIDTH, RESIZED_HEIGHT);
-        // console.log(context.getImageData(x, y, RESIZED_WIDTH, RESIZED_HEIGHT).data)
         return [context.getImageData(x, y, RESIZED_WIDTH, RESIZED_HEIGHT).data, RESIZED_WIDTH];
 
     }
 
-    function getResizeFactor(img) {
-        const MAX_WIDTH = +document.getElementById("max-width").value || INSTA_CHARS_PER_LINE;
-        document.documentElement.style.setProperty("--pixel-font-size", 800 / MAX_WIDTH + "px");
-        document.documentElement.style.setProperty("--pixel-size", 600 / MAX_WIDTH + "px");
+    function getPixeledImageWidth() {
+        return +document.getElementById("max-width").value || DEFAULT_CHARS_PER_LINE;
+    }
+
+    function getResizedFactor(img) {
+        const MAX_WIDTH = getPixeledImageWidth();
+        setStyleProperty("--cell-font-size", 40 / MAX_WIDTH + "rem");
+        setStyleProperty("--pixel-size", 600 / MAX_WIDTH + "px");
         const WIDTH = img.naturalWidth;
         return (WIDTH > MAX_WIDTH) 
             ? MAX_WIDTH / WIDTH
             : 1;
+    }
+
+    function setStyleProperty(name, value) {
+        document.documentElement.style.setProperty(name, value);
     }
 
     function arrayToMatrix(arr, size) {
@@ -69,12 +76,20 @@
         return matrix;
     }
 
+    function adjustLineHeight(textureMode) {
+        setStyleProperty("--line-height", (new RegExp("(text|dices)$")).test(textureMode) 
+                                                ? 100 / getPixeledImageWidth() + ".65em" 
+                                                : "auto"
+        );
+    }
+
     function renderDivImage(imgMatrix) {
         const textureInput = document.getElementById("texture");
         const textureMode = textureInput.options[textureInput.selectedIndex].value;
         const container = document.getElementById("txt-output");
         container.innerHTML = "<br>";
         console.debug(textureMode);
+        adjustLineHeight(textureMode);
         imgMatrix.forEach(async row => {
             const rowDiv = document.createElement("div");
             container.appendChild(rowDiv);
@@ -88,7 +103,7 @@
 
     function renderCell(cell, mode, parentNode=null) {
         switch (mode) {
-            case "bw-text": {
+            /* case "bw-text": {
                 const values = [
                     "@",   
                     "#",
@@ -100,8 +115,8 @@
                 ];
                 parentNode.innerHTML = renderBW(values, cell);
                 return;
-            }
-            case "bw-text-insta": {
+            }*/
+            case "bw-text": {
                 const values = [
                     "$",
                     "8",
@@ -121,7 +136,7 @@
                     //"&#127770;",  // dark moon  
                     "&#127921;",    // pool
                     //"&#127761;",  // grey
-                    "&#9201;",      // timer
+                    //"&#9201;",      // timer
                     "&#9917;",      // soccer ball
                     "&#127952;",    // volley ball
                     "&#9898;"       // white
@@ -244,42 +259,43 @@
         document.execCommand('copy');
         document.body.removeChild(el);
      }
-
   </script>
 </head>
 <body>
-  <div id="container">
-    <div>    
-        <label for="input">Image:</label>
-        <input id="input" type="file" name="text" value="">
+    <div id="jumbo-ctn">
+        <div id="panel">
+            <div>    
+                <label for="input">Image:</label>
+                <input id="input" type="file" name="text" value="">
+            </div>
+            <hr>
+            <div>
+                <label for="max-width">Pixel width:</label>
+                <input id="max-width" type="number" value="55">
+            </div>
+            <hr>
+            <div>
+                <label for="texture">Texture:</label>
+                <select id="texture">
+                    <!-- <option value="bw-text">bw-text</option> -->
+                    <option value="bw-emoji" selected>bw-emoji</option>
+                    <option value="rgb-emoji">rgb-emoji</option>
+                    <option value="bw-dices">bw-dices</option>
+                    <option value="brown-skinTones">brown-skinTones</option>
+                    <option value="bw-text">bw-text</option>
+                </select>
+            </div>
+            <hr>
+            <button onclick="copyText()">
+                <i class="fa fas-copy"></i>
+                COPY
+            </button>
+        </div>
+        <canvas id="canvas-output"></canvas>
+        <div id="txt-output"> 
+            Your image as a text will be displayed here
+        </div>
     </div>
-    <hr>
-    <div>
-        <label for="max-width">Pixel width:</label>
-        <input id="max-width" type="number" value="55">
-    </div>
-    <hr>
-    <div>
-        <label for="texture">Texture:</label>
-        <select id="texture">
-            <option value="bw-text">bw-text</option>
-            <option value="bw-emoji" selected>bw-emoji</option>
-            <option value="rgb-emoji">rgb-emoji</option>
-            <option value="bw-dices">bw-dices</option>
-            <option value="brown-skinTones">brown-skinTones</option>
-            <option value="bw-text-insta">bw-text-insta</option>
-        </select>
-    </div>
-    <hr>
-    <button onclick="copyText()">
-        <i class="fa fas fa-copy"></i>
-         COPY
-    </button>
-  </div>
-  <canvas id="canvas-output"></canvas>
-  <div id="txt-output"> 
-      Your image as a text will be displayed here
-  </div>
 </body>
 </html>
 
