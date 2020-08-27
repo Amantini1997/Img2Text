@@ -245,7 +245,9 @@
         children.shift();
         const text = children.map(div => [...div.children].map(span => span.innerHTML).join("")).join("\n");
         copyStringToClipboard(text);
-        console.log(text);
+        const popUp = document.getElementById("popup");
+        popUp.classList.add("visible");
+        setTimeout(() => popUp.classList.remove("visible"), 2500);
     }
 
     function copyStringToClipboard (str) {
@@ -287,7 +289,6 @@
             </div>
             <hr>
             <button onclick="copyText()">
-                <i class="fa fas-copy"></i>
                 COPY
             </button>
         </div>
@@ -296,6 +297,7 @@
             Your image as a text will be displayed here
         </div>
     </div>
+    <div id="popup">Message copied to clipboard</div>
 </body>
 </html>
 
