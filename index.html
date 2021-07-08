@@ -7,6 +7,11 @@
   <link rel="stylesheet" href="index.css">
   <script>
     const DEFAULT_CHARS_PER_LINE = 55;
+    /**
+     * true: row elements are rendered as html elements
+     * false: row elements are rendered as a string
+     */
+    const RENDER_ROW_ELEMENTS_AS_HTML = false;
 
     window.onload = () => {
         document.getElementById("input").onchange = async e => img2Text(e);
@@ -15,10 +20,10 @@
     }
 
     function img2Text(e) {
-            // GET the image
-            const input = (e.target || window.event.srcElement);
-            window.imgSrc = window.URL.createObjectURL(input.files[0]);
-            rerender();
+        // GET the image
+        const input = (e.target || window.event.srcElement);
+        window.imgSrc = window.URL.createObjectURL(input.files[0]);
+        rerender();
     }
 
     function rerender() {
@@ -92,17 +97,28 @@
         console.debug(textureMode);
         adjustLineHeight(textureMode);
         imgMatrix.forEach(async row => {
+            // create row HTML element and append it to container
             const rowDiv = document.createElement("div");
             container.appendChild(rowDiv);
-            row.forEach(cell => {
-                const cellDiv = document.createElement("div");
-                rowDiv.appendChild(cellDiv);
-                renderCell(cell, textureMode, cellDiv);
-            });   
+            // map to emoji/text
+            row = row.map(cell => renderCellByMode(cell, textureMode));
+
+            if (RENDER_ROW_ELEMENTS_AS_HTML) {
+                row.map(cell => wrapContentInHTML("span", cell))
+                   .forEach(cell => rowDiv.appendChild(cell));
+            } else {
+                rowDiv.innerHTML = row.join("");
+            }
         });
     }
+    
+    function wrapContentInHTML(elementTag, content) {
+        const element = document.createElement(elementTag);
+        element.innerHTML = content;
+        return element;
+    }
 
-    function renderCell(cell, mode, parentNode=null) {
+    function renderCellByMode(cell, mode) {
         switch (mode) {
             /* case "bw-text": {
                 const values = [
@@ -114,8 +130,7 @@
                     ".",
                     "⠀"
                 ];
-                parentNode.innerHTML = renderBW(values, cell);
-                return;
+                return renderBW(values, cell);
             }*/
             case "bw-text": {
                 const values = [
@@ -128,8 +143,7 @@
                     "L",
                     "_",
                 ];
-                parentNode.innerHTML = renderBW(values, cell);
-                return;
+                return renderBW(values, cell);
             }
             case "bw-emoji": {
                 const values = [
@@ -142,8 +156,7 @@
                     "&#127952;",    // volley ball
                     "&#9898;"       // white
                 ];
-                parentNode.innerHTML = renderBW(values, cell);
-                return;
+                return renderBW(values, cell);
             }
             case "bw-dices": {
                 const values = [
@@ -154,8 +167,7 @@
                     "&#9857;",
                     "&#9856;"
                 ];
-                parentNode.innerHTML = renderBW(values, cell);
-                return;            
+                return renderBW(values, cell);
             }
             case "brown-skinTones": {
                 const values = [
@@ -165,17 +177,16 @@
                     "&#127996;",
                     "&#127995;"
                 ];
-                parentNode.innerHTML = renderBW(values, cell);
-                return;
+                return renderBW(values, cell);
             }
             case "rgb-emoji": {
-                parentNode.innerHTML = renderRGBEmoji(cell);
-                return;
+                return renderRGBEmoji(cell);
             }
             default:
-                let rgbBg = [cell[0], cell[1], cell[2]].join(",");
-                parentNode.style.backgroundColor = "rgb(" + rgbBg + ")";
-                return;
+                throw new Error("Style not found");
+                // let rgbBg = [cell[0], cell[1], cell[2]].join(",");
+                // parentNode.style.backgroundColor = "rgb(" + rgbBg + ")";
+                // return;
         }
     }
 
@@ -290,7 +301,7 @@
             </div>
             <hr>
             <button onclick="copyText()">
-                COPY
+                COPY AS TEXT
             </button>
         </div>
         <br>
