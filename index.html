@@ -1,12 +1,69 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Img2Text</title>
 </head>
 <body>
-  <div id="app"></div>
+  <div id="app">
+    <header class="header">
+      <h1 class="header__title">Img2Text</h1>
+      <button id="theme-toggle" class="header__theme-toggle" aria-label="Toggle theme">
+        <span class="theme-icon"></span>
+      </button>
+    </header>
+    <main class="editor">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar__preview" id="preview-area">
+          <div class="drop-zone" id="drop-zone">
+            <p class="drop-zone__text">Drop image here<br>or click to select</p>
+            <input type="file" id="file-input" accept="image/*" hidden>
+          </div>
+          <div class="preview-container" id="preview-container" hidden>
+            <img id="preview-image" alt="Original image preview">
+            <button id="change-image" class="preview-container__change">Change</button>
+          </div>
+        </div>
+        <div class="sidebar__controls">
+          <label class="control">
+            <span class="control__label">Width</span>
+            <input type="range" id="width-slider" min="20" max="200" value="80" class="control__range">
+            <span class="control__value" id="width-value">80</span>
+          </label>
+          <label class="control">
+            <span class="control__label">Palette</span>
+            <select id="palette-select" class="control__select"></select>
+          </label>
+          <div class="control">
+            <label class="control__checkbox">
+              <input type="checkbox" id="dither-toggle">
+              <span>Dithering</span>
+            </label>
+          </div>
+          <div class="control">
+            <label class="control__checkbox">
+              <input type="checkbox" id="edge-toggle">
+              <span>Edge Detection</span>
+            </label>
+          </div>
+        </div>
+        <div class="sidebar__actions">
+          <button id="btn-copy" class="btn btn--primary" disabled>Copy to Clipboard</button>
+          <button id="btn-download" class="btn btn--secondary" disabled>Download .txt</button>
+          <button id="btn-png" class="btn btn--secondary" disabled>Save as PNG</button>
+        </div>
+      </aside>
+      <section class="output" id="output-area">
+        <div class="output__content" id="output-content">
+          <p class="output__placeholder">Your ASCII art will appear here</p>
+        </div>
+      </section>
+    </main>
+    <div class="toast" id="toast" hidden>
+      <span id="toast-message"></span>
+    </div>
+  </div>
   <script type="module" src="/src/index.ts"></script>
 </body>
 </html>

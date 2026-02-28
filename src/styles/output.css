@@ -1,0 +1,28 @@
+/* Output area */
+.output {
+  flex: 1;
+  position: relative;
+  overflow: auto;
+  background: var(--bg-primary);
+}
+
+.output__content {
+  padding: 16px;
+  min-height: 100%;
+}
+
+.output__placeholder {
+  color: var(--text-muted);
+  font-size: 1rem;
+  text-align: center;
+  padding-top: 40vh;
+}
+
+.output-row {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 10px;
+  line-height: 1.1;
+  white-space: pre;
+  color: var(--text-primary);
+  letter-spacing: 0.05em;
+}
